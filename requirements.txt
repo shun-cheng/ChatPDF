@@ -5,3 +5,4 @@ loguru
 jieba
 gradio
 PyPDF2
+transformers
