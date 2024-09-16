@@ -2,6 +2,7 @@
 
 The ChatPDF(PDF Chatbot) is an application that allows users to upload PDF files and interact with pdf using a chatbot. Users can ask questions or provide input, and the chatbot will generate responses based on the provided information.
 
+Refer to https://gitee.com/yiqun-wu/ChatPDF/tree/master. Instead, I downloaded the model from the Magic Tower community, and modified the chatpdf.py and modified the model path
 ## Technologies Used
 
 - MindSpore
