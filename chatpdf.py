@@ -52,17 +52,6 @@ PROMPT_TEMPLATE = """基于以下已知信息，简洁和专业的来回答用�
 {query_str}
 """
 
-# 自定义路径
-# 获取当前脚本的绝对路径
-current_script_path = os.path.abspath(__file__)
-
-# 获取当前脚本所在的目录
-current_directory = os.path.dirname(current_script_path)
-
-text_path = os.path.join(current_directory,"text2vec-base-multilingual")
-bge_path = os.path.join(current_directory,"bge-reranker-base")
-Yi_path = os.path.join(current_directory,"Yi-6B-Chat")
-
 class SentenceSplitter:
     def __init__(self, chunk_size: int = 250, chunk_overlap: int = 50):
         self.chunk_size = chunk_size
@@ -132,7 +121,7 @@ class ChatPDF:
             self,
             similarity_model: SimilarityABC = None,
             generate_model_type: str = "auto",
-            generate_model_name_or_path: str = Yi_path,
+            generate_model_name_or_path: str = "01ai/Yi-6B-Chat",
             lora_model_name_or_path: str = None,
             corpus_files: Union[str, List[str]] = None,
             save_corpus_emb_dir: str = "./corpus_embs/",
@@ -172,7 +161,7 @@ class ChatPDF:
         if similarity_model is not None:
             self.sim_model = similarity_model
         else:
-            m1 = BertSimilarity(model_name_or_path= text_path)
+            m1 = BertSimilarity(model_name_or_path="shibing624/text2vec-base-multilingual")
             m2 = BM25Similarity()
             default_sim_model = EnsembleSimilarity(similarities=[m1, m2], weights=[0.5, 0.5], c=2)
             self.sim_model = default_sim_model
@@ -189,8 +178,7 @@ class ChatPDF:
             self.add_corpus(corpus_files)
         self.save_corpus_emb_dir = save_corpus_emb_dir
         if rerank_model_name_or_path is None:
-            # rerank_model_name_or_path = "Xorbits/bge-reranker-base"
-            rerank_model_name_or_path = bge_path
+            rerank_model_name_or_path = "Xorbits/bge-reranker-base"
         if rerank_model_name_or_path:
             self.rerank_tokenizer = AutoTokenizer.from_pretrained(rerank_model_name_or_path, mirror='modelscope')
             self.rerank_model = AutoModelForSequenceClassification.from_pretrained(rerank_model_name_or_path, mirror='modelscope')
@@ -510,7 +498,6 @@ class ChatPDF:
         if hasattr(self.sim_model, 'load_corpus_embeddings'):
             logger.debug(f"Loading corpus embeddings from {emb_dir}")
             self.sim_model.load_corpus_embeddings(emb_dir)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
